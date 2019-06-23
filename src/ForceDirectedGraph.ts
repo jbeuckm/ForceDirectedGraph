@@ -1,7 +1,7 @@
 import { Item } from "./types.d"
 import Point2D from "./Point2D"
 
-class ForceDirectedGraph {
+abstract class ForceDirectedGraph {
   public areaSize: Point2D = null
   public placedItems: Item[] = null
   private ACCELERATION_FACTOR: number = null
@@ -12,19 +12,12 @@ class ForceDirectedGraph {
     this.ACCELERATION_FACTOR = ACCELERATION_FACTOR
   }
 
-  public forceOnItemFromSourceItem = (
+  abstract forceOnItemFromSourceItem(
     targetItem: Item,
     sourceItem: Item,
     areaSize: Point2D,
     relationship: object
-  ): Point2D => {
-    throw new Error(`forceOnItemFromSourceItem() not defined as (
-      targetItem: Item,
-      sourceItem: Item,
-      areaSize: Point2D,
-      relationship: object
-    ): Point2D`)
-  }
+  ): Point2D
 
   totalForceOnItem = (itemIndex: number): Point2D => {
     const item = this.placedItems[itemIndex]
@@ -88,12 +81,7 @@ class ForceDirectedGraph {
     }
   }
 
-  public getItemsRelationship = (
-    sourceItem: Item,
-    targetItem: Item
-  ): object => {
-    throw "getItemsRelationship must be defined as (sourceItem:Item, targetItem:Item):object"
-  }
+  abstract getItemsRelationship(sourceItem: Item, targetItem: Item): object
 
   public prepareRelationshipMatrix = (): object[][] => {
     const N = this.placedItems.length

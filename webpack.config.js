@@ -1,10 +1,13 @@
 const path = require("path")
 
 module.exports = {
-  entry: "./src/ForceDirectedGraph.ts",
+  entry: "./src/index.ts",
   output: {
-    filename: "main.js",
+    filename: "bundle.js",
     path: path.resolve(__dirname, "dist"),
+    library: "FDG",
+    libraryTarget: "umd",
+    //    libraryExport: "default",
   },
   resolve: {
     // Add `.ts` and `.tsx` as a resolvable extension.

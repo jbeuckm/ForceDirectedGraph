@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <script src="../dist/bundle.js"></script>
+  </head>
+
+  <body>
+    <canvas id="fdgCanvas" width="500" height="500"></canvas>
+
+    <script>
+      const EXTENT = new FDG.Point2D(500, 500)
+
+      class demoFdg extends FDG.ForceDirectedGraph {
+        forceOnItemFromSourceItem(targetItem, sourceItem, relationship) {
+          const d = FDG.distance2D(
+            targetItem.position,
+            sourceItem.position,
+            EXTENT
+          )
+          const attraction =
+            ((sourceItem.mass + targetItem.mass) * 300) / d.magnitude
+          const repulsion = -20000 / Math.pow(d.magnitude - 8, 2)
+
+          const forceMagnitude = attraction + repulsion
+
+          return new FDG.Point2D(
+            forceMagnitude * d.direction.x,
+            forceMagnitude * d.direction.y
+          )
+        }
+
+        getItemsRelationship(sourceItem, targetItem) {
+          return {}
+        }
+      }
+
+      const fdg = new demoFdg(EXTENT, 0.03)
+
+      const items = Array(100)
+        .fill(0)
+        .map(function(_, i) {
+          return { id: i, mass: Math.random() }
+        })
+      fdg.initializePositions(items)
+      fdg.prepareRelationshipMatrix()
+
+      window.onload = function() {
+        var c = document.getElementById("fdgCanvas")
+        var ctx = c.getContext("2d")
+        const TWO_PI = 2 * Math.PI
+
+        function render() {
+          fdg.step()
+
+          ctx.clearRect(0, 0, 500, 500)
+
+          fdg.placedItems.forEach(function(item) {
+            ctx.beginPath()
+            ctx.moveTo(item.position.x, item.position.y)
+            ctx.arc(item.position.x, item.position.y, 10 * item.mass, 0, TWO_PI)
+            ctx.fillStyle = "#666"
+            ctx.fill()
+          })
+
+          window.requestAnimationFrame(render)
+        }
+
+        render()
+      }
+    </script>
+  </body>
+</html>
